@@ -1,0 +1,25 @@
+vault:
+  image: vault:latest
+  volumes:
+    - ./vault.hcl:/etc/vault.hcl
+  links:
+    - "consul:consul"
+    - "postgres:postgres"
+  cap_add:
+    - IPC_LOCK
+  ports:
+    - 8200:8200
+  command: "server -config=/etc/vault.hcl"
+
+postgres:
+  image: postgres:latest
+  environment:
+    - "POSTGRES_PASSWORD=secret"
+
+consul:
+  image: consul:latest
+  ports: 
+    - 80:8500
+  volumes:
+    - ./consul.json:/etc/consul.json
+  command: "agent -config-file=/etc/consul.json"
